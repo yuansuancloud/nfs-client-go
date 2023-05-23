@@ -1,4 +1,4 @@
-module github.com/Cyberax/go-nfs-client
+module github.com/kha7iq/go-nfs-client
 
 go 1.17
 

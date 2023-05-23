@@ -1,3 +1,8 @@
+# ⚠️ Temporary fork refer to orignal project
+
+[Cyberax/go-nfs-client](https://github.com/Cyberax/go-nfs-client)
+
+
 # Pure-Go NFSv4 client
 This library is a pure-Go client for NFSv4 (NFSv3 is NOT supported at all). It's mostly 
 designed and tested for AWS EFS, but will work fine with Linux's `nfs4-server` or userspace-based
