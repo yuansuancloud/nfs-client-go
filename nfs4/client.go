@@ -14,7 +14,7 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/kha7iq/go-nfs-client/internal"
+	. "github.com/yuansuancloud/nfs-client-go/internal"
 )
 
 const NfsReadBlockLen = 512 * 1024
@@ -788,68 +788,68 @@ func (c *NfsClient) DeleteFile(path string) error {
 }
 
 func (c *NfsClient) Rename(oldPath string, newPath string) error {
-    oldPathParts := splitPath(oldPath)
-    newPathParts := splitPath(newPath)
+	oldPathParts := splitPath(oldPath)
+	newPathParts := splitPath(newPath)
 
-    if len(oldPathParts) == 0 || len(newPathParts) == 0 {
-        return fmt.Errorf("invalid source or target path")
-    }
+	if len(oldPathParts) == 0 || len(newPathParts) == 0 {
+		return fmt.Errorf("invalid source or target path")
+	}
 
-    oldDirPath := oldPathParts[:len(oldPathParts)-1]
-    oldName := Component4(oldPathParts[len(oldPathParts)-1])
+	oldDirPath := oldPathParts[:len(oldPathParts)-1]
+	oldName := Component4(oldPathParts[len(oldPathParts)-1])
 
-    newDirPath := newPathParts[:len(newPathParts)-1]
-    newName := Component4(newPathParts[len(newPathParts)-1])
+	newDirPath := newPathParts[:len(newPathParts)-1]
+	newName := Component4(newPathParts[len(newPathParts)-1])
 
-    // Prepare the NFS arguments
-    ops := []Nfs_argop4{
-        {Argop: OP_PUTROOTFH},
-    }
+	// Prepare the NFS arguments
+	ops := []Nfs_argop4{
+		{Argop: OP_PUTROOTFH},
+	}
 
-    for _, dir := range oldDirPath {
-        ops = append(ops, Nfs_argop4{
-            Argop: OP_LOOKUP,
-            U:     &LOOKUP4args{Objname: Component4(dir)},
-        })
-    }
+	for _, dir := range oldDirPath {
+		ops = append(ops, Nfs_argop4{
+			Argop: OP_LOOKUP,
+			U:     &LOOKUP4args{Objname: Component4(dir)},
+		})
+	}
 
-    ops = append(ops, Nfs_argop4{
-        Argop: OP_SAVEFH,
-    })
+	ops = append(ops, Nfs_argop4{
+		Argop: OP_SAVEFH,
+	})
 
-    ops = append(ops, Nfs_argop4{Argop: OP_PUTROOTFH})
+	ops = append(ops, Nfs_argop4{Argop: OP_PUTROOTFH})
 
-    for _, dir := range newDirPath {
-        ops = append(ops, Nfs_argop4{
-            Argop: OP_LOOKUP,
-            U:     &LOOKUP4args{Objname: Component4(dir)},
-        })
-    }
+	for _, dir := range newDirPath {
+		ops = append(ops, Nfs_argop4{
+			Argop: OP_LOOKUP,
+			U:     &LOOKUP4args{Objname: Component4(dir)},
+		})
+	}
 
-    ops = append(ops, Nfs_argop4{
-        Argop: OP_RENAME,
-        U: &RENAME4args{
-            Oldname: oldName,
-            Newname: newName,
-        },
-    })
+	ops = append(ops, Nfs_argop4{
+		Argop: OP_RENAME,
+		U: &RENAME4args{
+			Oldname: oldName,
+			Newname: newName,
+		},
+	})
 
-    // Run the NFS transaction
-    res, err := c.runNfsTransaction(ops, oldPath)
-    if err != nil {
-        return err
-    }
+	// Run the NFS transaction
+	res, err := c.runNfsTransaction(ops, oldPath)
+	if err != nil {
+		return err
+	}
 
-    lastOp := res[len(res)-1]
-    renameRes, ok := lastOp.U.(*RENAME4res)
-    if !ok {
-        return fmt.Errorf("unexpected result type: %T", lastOp.U)
-    }
+	lastOp := res[len(res)-1]
+	renameRes, ok := lastOp.U.(*RENAME4res)
+	if !ok {
+		return fmt.Errorf("unexpected result type: %T", lastOp.U)
+	}
 
-    if renameRes.Status != NFS4_OK {
-        return fmt.Errorf("NFS error: %v", renameRes.Status)
-    }
-    return nil
+	if renameRes.Status != NFS4_OK {
+		return fmt.Errorf("NFS error: %v", renameRes.Status)
+	}
+	return nil
 }
 
 func (c *NfsClient) MakePath(path string) error {

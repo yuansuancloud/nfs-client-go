@@ -11,8 +11,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/kha7iq/go-nfs-client/nfs4"
 	"github.com/stretchr/testify/assert"
+	"github.com/yuansuancloud/nfs-client-go/nfs4"
 )
 
 const NumScaleThreads = 40

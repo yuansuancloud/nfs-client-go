@@ -1,4 +1,4 @@
-module github.com/kha7iq/go-nfs-client
+module github.com/yuansuancloud/nfs-client-go
 
 go 1.17
 
